@@ -3,111 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HS-GAMES - ULTIMATE</title>
+<title>HS-GAMES V3 - 10 GAMES</title>
 <style>
-body{margin:0;font-family:sans-serif;background:#0a0a0a;color:white;text-align:center;padding:15px}
-h1{font-size:45px;color:#00ff88;text-shadow:0 0 20px #00ff88;margin:20px 0 5px}
-.sub{opacity:0.6;margin-bottom:20px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:500px;margin:0 auto}
-.btn{background:#1e1e1e;border:2px solid #222;padding:18px 10px;border-radius:15px;color:white;font-weight:bold;font-size:15px;cursor:pointer}
-.btn:hover{border-color:#00ff88;transform:scale(1.03)}
-.btn span{font-size:28px;display:block;margin-bottom:5px}
-#gameArea{background:#111;border:2px solid #00ff88;margin:20px auto;padding:15px;border-radius:20px;display:none;max-width:420px;position:relative}
-canvas{background:#000;display:block;margin:10px auto;border-radius:10px;touch-action:none}
-#controls button{margin:4px;padding:10px 14px;background:#222;color:white;border:1px solid #333;border-radius:8px}
+body{margin:0;font-family:sans-serif;background:#070707;color:white;text-align:center;padding:12px}
+h1{font-size:42px;color:#00ff88;text-shadow:0 0 15px #00ff88;margin:10px 0}
+.sub{opacity:0.5;margin-bottom:15px;font-size:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:520px;margin:0 auto}
+.btn{background:#151515;border:2px solid #222;padding:14px 6px;border-radius:14px;color:white;font-weight:bold;font-size:13px;cursor:pointer}
+.btn:active{transform:scale(0.95);border-color:#00ff88}
+.btn span{font-size:26px;display:block}
+#gameArea{background:#111;border:2px solid #00ff88;margin:18px auto;padding:12px;border-radius:18px;display:none;max-width:440px}
+canvas{background:#000;display:block;margin:8px auto;border-radius:10px;touch-action:none}
+#controls button{margin:3px;padding:8px 12px;background:#222;color:white;border:1px solid #333;border-radius:7px}
+#closeBtn{background:#ff2a2a;color:white;border:0;padding:10px 18px;border-radius:9px;font-weight:bold;margin-top:8px}
 </style>
 </head>
 <body>
 <h1>HS-GAMES</h1>
-<p class="sub">by hallo949 • 6 Games • Offline spielbar</p>
+<p class="sub">V3 by hallo949 • 10 Games • 100% Handy</p>
 
 <div class="grid">
 <button class="btn" onclick="start(1)"><span>🐍</span>Snake</button>
 <button class="btn" onclick="start(2)"><span>🧱</span>Breakout</button>
 <button class="btn" onclick="start(3)"><span>🐦</span>Flappy</button>
 <button class="btn" onclick="start(4)"><span>⚡</span>Clicker</button>
-<button class="btn" onclick="start(5)"><span>🎯</span>Aim Trainer</button>
+<button class="btn" onclick="start(5)"><span>🎯</span>Aim</button>
 <button class="btn" onclick="start(6)"><span>🧠</span>Memory</button>
+<button class="btn" onclick="start(7)"><span>🏓</span>Pong</button>
+<button class="btn" onclick="start(8)"><span>💣</span>Minesweeper</button>
+<button class="btn" onclick="start(9)"><span>🦖</span>Dino Run</button>
+<button class="btn" onclick="start(10)"><span>🔢</span>2048 Mini</button>
 </div>
 
 <div id="gameArea">
-<h2 id="gTitle" style="margin:5px"></h2>
+<h2 id="gTitle" style="margin:4px;font-size:18px"></h2>
 <canvas id="game" width="320" height="320"></canvas>
 <div id="controls"></div>
-<p id="scoreText" style="font-weight:bold;color:#00ff88"></p>
-<button onclick="closeGame()" style="background:#ff3333;color:white;border:0;padding:12px 20px;border-radius:10px;font-weight:bold">✖ Schließen</button>
+<p id="scoreText" style="color:#00ff88;font-weight:bold"></p>
+<button id="closeBtn" onclick="closeGame()">✖ Schließen</button>
 </div>
 
 <script>
 let canvas=document.getElementById('game'), ctx=canvas.getContext('2d'), loop, score, area=document.getElementById('gameArea');
-
-function start(n){
- area.style.display='block'; area.scrollIntoView({behavior:'smooth'});
- document.getElementById('controls').innerHTML=''; score=0; clearInterval(loop); canvas.onclick=null; document.onkeydown=null;
- if(n==1) snake(); if(n==2) breakout(); if(n==3) flappy(); if(n==4) clicker(); if(n==5) aim(); if(n==6) memory();
-}
+function start(n){area.style.display='block'; area.scrollIntoView({behavior:'smooth'}); document.getElementById('controls').innerHTML=''; score=0; clearInterval(loop); canvas.onclick=null; document.onkeydown=null; canvas.onmousemove=null; if(n==1) snake(); if(n==2) breakout(); if(n==3) flappy(); if(n==4) clicker(); if(n==5) aim(); if(n==6) memory(); if(n==7) pong(); if(n==8) mines(); if(n==9) dino(); if(n==10) mini2048();}
 function closeGame(){area.style.display='none'; clearInterval(loop);}
 
-function snake(){
- document.getElementById('gTitle').innerText='🐍 SNAKE';
- let sn=[{x:10,y:10}], food={x:15,y:15}, dir={x:1,y:0}; score=0;
- document.onkeydown=e=>{if(e.key=='ArrowUp'&&dir.y==0)dir={x:0,y:-1};if(e.key=='ArrowDown'&&dir.y==0)dir={x:0,y:1};if(e.key=='ArrowLeft'&&dir.x==0)dir={x:-1,y:0};if(e.key=='ArrowRight'&&dir.x==0)dir={x:1,y:0};}
- document.getElementById('controls').innerHTML='<button onclick="dir={x:0,y:-1}">⬆️</button><br><button onclick="dir={x:-1,y:0}">⬅️</button><button onclick="dir={x:1,y:0}">➡️</button><br><button onclick="dir={x:0,y:1}">⬇️</button>';
- loop=setInterval(()=>{
-  let h={x:sn[0].x+dir.x,y:sn[0].y+dir.y};
-  if(h.x<0||h.x>19||h.y>19||h.x<0||sn.some(s=>s.x==h.x&&s.y==h.y)){clearInterval(loop);alert('Game Over! Score: '+score);closeGame();return;}
-  sn.unshift(h); if(h.x==food.x&&h.y==food.y){score++;food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)}}else sn.pop();
-  ctx.fillStyle='#000';ctx.fillRect(0,0,320,320);ctx.fillStyle='#00ff88';sn.forEach(s=>ctx.fillRect(s.x*16,s.y*16,15,15));ctx.fillStyle='red';ctx.fillRect(food.x*16,food.y*16,15,15);
-  document.getElementById('scoreText').innerText='Score: '+score;
- },110);
-}
-function breakout(){
- document.getElementById('gTitle').innerText='🧱 BREAKOUT'; let x=160,y=250,dx=3,dy=-3,paddle=130; score=0;
- let bricks=[]; for(let i=0;i<5;i++)for(let j=0;j<6;j++)bricks.push({x:j*52+10,y:i*20+30,alive:true});
- canvas.onmousemove=e=>{let r=canvas.getBoundingClientRect(); paddle=e.clientX-r.left-40;};
- loop=setInterval(()=>{
-  ctx.clearRect(0,0,320,320); ctx.fillStyle='#00ff88'; bricks.forEach(b=>{if(b.alive){ctx.fillRect(b.x,b.y,48,15); if(x>b.x&&x<b.x+48&&y>b.y&&y<b.y+15){dy=-dy;b.alive=false;score++;}}});
-  ctx.fillStyle='white'; ctx.fillRect(paddle,300,80,10); ctx.beginPath();ctx.arc(x,y,8,0,Math.PI*2);ctx.fill();
-  x+=dx; y+=dy; if(x<0||x>320)dx=-dx; if(y<0)dy=-dy; if(y>310&&x>paddle&&x<paddle+80)dy=-dy; if(y>320){clearInterval(loop);alert('Verloren! Score:'+score);closeGame();}
-  document.getElementById('scoreText').innerText='Score: '+score;
- },16);
-}
-function flappy(){
- document.getElementById('gTitle').innerText='🐦 FLAPPY'; let birdY=150, vel=0, pipes=[], pipeX=320; score=0;
- canvas.onclick=()=>vel=-6; document.onkeydown=()=>vel=-6;
- loop=setInterval(()=>{
-  vel+=0.4; birdY+=vel; if(birdY>310||birdY<0){clearInterval(loop);alert('Crash! Score:'+score);closeGame();return;}
-  if(pipeX<-50){pipeX=320; pipes=[Math.random()*150+50]; score++;}
-  pipeX-=3;
-  ctx.fillStyle='#000';ctx.fillRect(0,0,320,320);ctx.fillStyle='#00ff88';ctx.fillRect(pipeX,0,20,pipes[0]-60);ctx.fillRect(pipeX,pipes[0]+60,20,320);
-  ctx.fillStyle='yellow';ctx.beginPath();ctx.arc(80,birdY,12,0,Math.PI*2);ctx.fill();
-  if(80>pipeX&&80<pipeX+20&&(birdY<pipes[0]-60||birdY>pipes[0]+60)){clearInterval(loop);alert('Crash! Score:'+score);closeGame();}
-  document.getElementById('scoreText').innerText='Score: '+score;
- },20);
- pipes=[150];
-}
-function clicker(){
- document.getElementById('gTitle').innerText='⚡ CLICKER - 10 Sek'; score=0; let t=10;
- ctx.fillStyle='#00ff88';ctx.fillRect(0,0,320,320);ctx.fillStyle='black';ctx.font='bold 24px sans-serif';ctx.fillText('KLICKE WIE WILD!',60,160);
- canvas.onclick=()=>{score++;};
- loop=setInterval(()=>{t--;document.getElementById('scoreText').innerText='Score: '+score+' | '+t+'s';if(t<=0){clearInterval(loop);alert('Score: '+score+' Klicks!');closeGame();}},1000);
-}
-function aim(){
- document.getElementById('gTitle').innerText='🎯 AIM TRAINER'; score=0; let tx,ty,time=15;
- function newTarget(){tx=Math.random()*280+20;ty=Math.random()*280+20;}
- newTarget();
- canvas.onclick=e=>{let r=canvas.getBoundingClientRect(); let mx=e.clientX-r.left, my=e.clientY-r.top; if(Math.hypot(mx-tx,my-ty)<20){score++;newTarget();}};
- loop=setInterval(()=>{
-  ctx.fillStyle='#000';ctx.fillRect(0,0,320,320);ctx.fillStyle='red';ctx.beginPath();ctx.arc(tx,ty,18,0,Math.PI*2);ctx.fill();ctx.fillStyle='white';ctx.beginPath();ctx.arc(tx,ty,8,0,Math.PI*2);ctx.fill();
-  time-=0.02; document.getElementById('scoreText').innerText='Score: '+score+' | '+(time).toFixed(1)+'s'; if(time<=0){clearInterval(loop);alert('Aim Score: '+score);closeGame();}
- },20);
-}
-function memory(){
- document.getElementById('gTitle').innerText='🧠 MEMORY'; let cards=[1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8].sort(()=>Math.random()-0.5), revealed=Array(16).fill(false), first=-1; score=0;
- function draw(){ctx.clearRect(0,0,320,320);for(let i=0;i<16;i++){let x=(i%4)*80, y=Math.floor(i/4)*80; ctx.fillStyle=revealed[i]?'#00ff88':'#222';ctx.fillRect(x+2,y+2,76,76); if(revealed[i]){ctx.fillStyle='black';ctx.font='30px sans-serif';ctx.fillText(cards[i],x+25,y+50);}} if(revealed.every(r=>r)){document.getElementById('scoreText').innerText='GEWONNEN!';clearInterval(loop);}}
- canvas.onclick=e=>{let r=canvas.getBoundingClientRect();let x=Math.floor((e.clientX-r.left)/80), y=Math.floor((e.clientY-r.top)/80), idx=y*4+x; if(revealed[idx])return; revealed[idx]=true; if(first==-1)first=idx; else{if(cards[first]!=cards[idx]){setTimeout(()=>{revealed[first]=false;revealed[idx]=false;draw();},500);}else{score+=2;} first=-1;} draw();};
- draw();
-}
-</script>
-</body>
-</html>
+// 1 SNAKE
+function snake(){document.getElementById('gTitle').innerText='🐍 SNAKE'; let sn=[{x:10,y:10}], food={x:15,y:15}, dir={x:1,y:0}; score=0; document.onkeydown=e=>{if(e.key=='ArrowUp'&&dir.y==0)dir={x:0,y:-1};if(e.key=='ArrowDown'&&dir.y==0)dir={x:0,y:1};if(e.key=='ArrowLeft'&&dir.x==0)dir={x:-1,y:0};if(e.key=='ArrowRight'&&dir.x==0)dir={x:1,y:0};}; document.getElementById('controls').innerHTML='<button onclick="dir={x:0,y:-1}">⬆️</button><br><button onclick="dir={x:-1,y:0}">⬅️</button><button onclick="dir={x:1,y:0}">➡️</button><br><button onclick="dir={x:0,y:1}">⬇️</button>'; loop=setInterval(()=>{let h={x:sn[0].x+dir.x,y:sn[0].y+dir.y}; if(h.x<0||h.x>19||h.y<0||h.y>19||sn.some(s=>s.x==h.x&&s.y==h.y)){clearInterval(loop);alert('Game Over Score:'+score);closeGame();return;} sn.unshift(h); if(h.x==food.x&&h.y==food.y){score++;food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)}} else sn.pop(); ctx.fillStyle='#000';ctx.fillRect(0,0,320,320);ctx.fillStyle='#00ff88';sn.forEach(s=>ctx.fillRect(s.x*16,s.y*16,15,15));ctx.fillStyle='red';ctx.fillRect(food.x*16,food.y*16,15,15);document.getElementById('scoreText').innerText='Score: '+score;},110);}
+
+// 2 BREAKOUT
+function breakout(){document.getElementById('gTitle').innerText='🧱 BREAKOUT';
